@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Magic Typewriter</title>
+
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+ 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ancientLight: '#e3caae',
+                        ancientDark: '#4a2d24',
+                    },
+                    fontFamily: {
+                        ancient: ['"KingthingsFoundation"', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @font-face {
+            font-family: 'KingthingsFoundation';
+            src: url('assets/fonts/Kingthings_Foundation.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            background: url("assets/bgp.jpg") no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'KingthingsFoundation', serif;
+        }
+
+        .blinking-cursor::after {
+            content: '|';
+            animation: blink 1s step-start infinite;
+            color: #e3caae;
+            font-weight: bold;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="text-ancientLight min-h-screen overflow-auto scrollbar-none scroll-smooth">
+
+    
+    <audio id="bgm" src="assets/bgm.mp3" loop></audio>
+
+    
+    <div class="absolute top-4 right-4 flex gap-2 z-50">
+        <button onclick="playMusic()"
+            class="bg-ancientDark text-ancientLight px-4 py-2 rounded shadow hover:scale-105 transition transform">Music
+            On</button>
+        <button onclick="pauseMusic()"
+            class="bg-ancientDark text-ancientLight px-4 py-2 rounded shadow hover:scale-105 transition transform">Music
+            Off</button>
+        <button onclick="toggleSFX()" id="sfxBtn"
+            class="bg-ancientDark text-ancientLight px-4 py-2 rounded shadow hover:scale-105 transition transform">SFX:
+            Off</button>
+    </div>
+
+    
+    <div class="max-w-3xl mx-auto mt-32 bg-ancientDark/80 rounded-xl p-8 shadow-2xl backdrop-blur-sm">
+        <h1 class="text-4xl font-ancient text-center mb-6 tracking-wider">✨ The Magic Typewriter ✨</h1>
+
+        <textarea id="userInput" placeholder="Begin your tale..."
+            class="w-full h-28 rounded p-4 text-ancientDark bg-ancientLight font-ancient text-lg resize-none shadow-inner focus:outline-none mb-4"></textarea>
+
+        <button onclick="generateStory()"
+            class="bg-ancientLight text-ancientDark font-bold py-3 px-6 rounded hover:bg-amber-300 transition">
+            Continue the Story
+        </button>
+
+        <div id="storyOutput" class="mt-6 text-lg font-ancient whitespace-pre-wrap leading-relaxed"></div>
+    </div>
+
+    <script>
+        const music = document.getElementById("bgm");
+        let sfxEnabled = false;
+        const typeSound = new Audio('assets/typekey.m4a');
+        typeSound.volume = 0.2;
+
+        function playMusic() {
+            music.play();
+        }
+
+        function pauseMusic() {
+            music.pause();
+        }
+
+        function toggleSFX() {
+            sfxEnabled = !sfxEnabled;
+            document.getElementById("sfxBtn").textContent = `SFX: ${sfxEnabled ? 'On' : 'Off'}`;
+        }
+
+        async function generateStory() {
+            const input = document.getElementById("userInput").value;
+            const output = document.getElementById("storyOutput");
+            output.textContent = "Summoning story magic...";
+            output.classList.remove('blinking-cursor');
+
+            try {
+                const res = await fetch("http://localhost:5000/generate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ prompt: input })
+                });
+
+                const data = await res.json();
+
+                if (!data.response) {
+                    output.textContent = "❌ Failed to generate story. Try again.";
+                    return;
+                }
+
+                output.textContent = "";
+                typeWriterEffect(data.response, output);
+            } catch (err) {
+                console.error("Frontend Error:", err);
+                output.textContent = "❌ Something went wrong. Please try again.";
+            }
+        }
+
+        function typeWriterEffect(text, element) {
+            let i = 0;
+            element.classList.add('blinking-cursor');
+
+            const interval = setInterval(() => {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+
+                    if (sfxEnabled) playSFX();
+
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    element.classList.remove('blinking-cursor');
+                }
+            }, 190);
+        }
+
+        function playSFX() {
+            typeSound.currentTime = 0;
+            typeSound.playbackRate = 0.9 + Math.random() * 0.2;
+            typeSound.play().catch(() => { });
+        }
+    </script>
+
+</body>
