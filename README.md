@@ -36,8 +36,8 @@ We blend **mystical aesthetics with AI power** to bring your words to life:
 
 ## 📸 Screenshots
 
-![Story Generator](assets/ss1.png)
-![Live Typing Effect](assets/ss2.png)
+![Story Generator](frontend/assets/ss1.png)
+![Live Typing Effect](frontend/assets/ss2.png)
 
 ---
 
