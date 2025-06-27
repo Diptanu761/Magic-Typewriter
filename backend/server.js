@@ -14,7 +14,7 @@ app.post('/generate', async (req, res) => {
   if (!userPrompt) return res.status(400).json({ error: 'Prompt is empty!' });
 
   try {
-    const response = await fetch('https://magic-backend.onrender.com/generate', {
+    const response = await fetch('https://ai.hackclub.com/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
