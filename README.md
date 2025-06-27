@@ -36,8 +36,8 @@ We blend **mystical aesthetics with AI power** to bring your words to life:
 
 ## 📸 Screenshots
 
-![Story Generator](images/ss1.png)
-![Live Typing Effect](images/ss2.png)
+![Story Generator](assets/ss1.png)
+![Live Typing Effect](assets/ss2.png)
 
 ---
 
@@ -67,7 +67,7 @@ We blend **mystical aesthetics with AI power** to bring your words to life:
 
 ## 📦 Live Demo
 
-👉 [Magic Typewriter – Live Preview](https://your-live-link.com)
+👉 [Magic Typewriter – Live Preview](https://magic-typewriter.vercel.app/)
 
 ---
 
